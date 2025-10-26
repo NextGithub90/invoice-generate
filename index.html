@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Invoice & Quotation Generator</title>
+    <meta name="description"
+        content="Buat invoice atau quotation modern, impor CSV, edit item, dan ekspor PDF multi-halaman." />
+    <link rel="canonical" href="http://localhost:5500/" />
+    <meta name="robots" content="index,follow" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+</head>
+
+<body>
+    <header class="bg-primary text-white py-3 shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0">Invoice & Quotation Generator</h1>
+            <a class="btn btn-light btn-sm" href="#preview">Preview</a>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <div class="row g-4">
+            <!-- Form -->
+            <section class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Pengaturan Dokumen</h2>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label">Tipe</label>
+                                <select id="docType" class="form-select">
+                                    <option>Invoice</option>
+                                    <option>Quotation</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Mata Uang</label>
+                                <select id="currency" class="form-select">
+                                    <option value="IDR">IDR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h3 class="h6 text-muted mb-2">Perusahaan (From)</h3>
+                        <div class="row g-3">
+                            <div class="col-sm-6"><input id="compName" class="form-control"
+                                    placeholder="Nama Perusahaan" value="Studio Shodwe" /></div>
+                            <div class="col-sm-6"><input id="compEmail" class="form-control" placeholder="Email"
+                                    value="hel.com" /></div>
+                            <div class="col-sm-12"><input id="compAddr" class="form-control" placeholder="Alamat"
+                                    value="123 Anywhere St., Any City" /></div>
+                            <div class="col-sm-6"><input id="compPhone" class="form-control"
+                                    placeholder="Account Number" value="123-456-7890" /></div>
+                            <div class="col-sm-6"><input id="compWebsite" class="form-control" placeholder="Website"
+                                    value="reallygreatsite.com" /></div>
+                        </div>
+
+                        <h3 class="h6 text-muted mt-4 mb-2">Klien (To)</h3>
+                        <div class="row g-3">
+                            <div class="col-sm-6"><input id="clientName" class="form-control" placeholder="Nama Klien"
+                                    value="Ketut Susilo" /></div>
+                            <div class="col-sm-6"><input id="clientEmail" class="form-control" placeholder="Email"
+                                    value="client@example.com" /></div>
+                            <div class="col-sm-12"><input id="clientAddr" class="form-control" placeholder="Alamat"
+                                    value="123 Anywhere St., Any City" /></div>
+                            <div class="col-sm-6"><input id="clientPhone" class="form-control"
+                                    placeholder="Account Number" value="123-456-7890" /></div>
+                        </div>
+
+                        <h3 class="h6 text-muted mt-4 mb-2">Detail Dokumen</h3>
+                        <div class="row g-3">
+                            <div class="col-sm-4"><input id="invNo" class="form-control" placeholder="Nomor"
+                                    value="12345" /></div>
+                            <div class="col-sm-4"><input id="invDate" type="date" class="form-control" /></div>
+                            <div class="col-sm-4"><input id="dueDate" type="date" class="form-control" /></div>
+                            <div class="col-sm-4"><input id="taxRate" type="number" min="0" class="form-control"
+                                    placeholder="Pajak %" value="10" /></div>
+                            <div class="col-sm-4"><input id="discount" type="number" min="0" class="form-control"
+                                    placeholder="Diskon" value="500" /></div>
+                        </div>
+
+                        <h3 class="h6 mt-4 mb-2">Item</h3>
+                        <div class="table-responsive">
+                            <table class="table align-middle" id="itemsTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:45%">Deskripsi</th>
+                                        <th>Qty</th>
+                                        <th>Harga</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button id="addItem" class="btn btn-outline-primary">Tambah Item</button>
+                            <label class="btn btn-outline-secondary mb-0">Import CSV <input id="csvInput" type="file"
+                                    accept=".csv" hidden></label>
+                            <button id="clearItems" class="btn btn-outline-danger">Bersihkan</button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-sm-6"><input id="notes" class="form-control" placeholder="Catatan / Terms"
+                                    value="Silakan bayar dalam 30 hari." /></div>
+                            <div class="col-sm-6 text-sm-end">
+                                <button id="generatePdf" class="btn btn-primary w-100">Generate PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview -->
+            <section id="preview" class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold" id="pDocType">Invoice</div>
+                                <small>No: <span id="pInvNo">12345</span> • Tgl: <span id="pInvDate">—</span></small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-semibold" id="pCompName">Studio Shodwe</div>
+                                <small id="pCompAddr">123 Anywhere St., Any City</small><br>
+                                <small id="pCompWebsite">reallygreatsite.com</small><br>
+                                <small id="pCompEmail">hello@reallygreatsite.com</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="mb-2"><strong>Kepada:</strong> <span id="pClientName">Ketut Susilo</span><br><small
+                                id="pClientAddr">123 Anywhere St., Any City</small></div>
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="previewItems">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Deskripsi</th>
+                                        <th>Qty</th>
+                                        <th>Harga</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="row g-3 mt-3 align-items-start">
+                            <div class="col-md-6">
+                                <div class="fw-semibold mb-2">Payment Method</div>
+                                <div class="small">Bank Name : <span id="pCompName">Studio Shodwe</span></div>
+                                <div class="small">Account Number : <span id="pCompPhone">123-456-7890</span></div>
+
+                                <div class="fw-semibold mt-3 mb-2">Term and Conditions :</div>
+                                <div class="small text-muted" id="pNotes">Silakan bayar dalam 30 hari.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-end">
+                                    <div>Sub Total: <span id="pSub">Rp0</span></div>
+                                    <div>Pajak <span id="pTaxRate">10</span>%: <span id="pTax">Rp0</span></div>
+                                    <div>Diskon: <span id="pDisc">Rp0</span></div>
+                                </div>
+                                <div
+                                    class="bg-primary text-white rounded d-flex justify-content-between align-items-center px-3 py-2 mt-2">
+                                    <div class="fw-bold">GRAND TOTAL</div>
+                                    <div class="fw-bold" id="pGrand">Rp0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact bar -->
+                        <hr class="mt-4">
+                        <div class="text-center text-primary fw-semibold mb-2">Administrator</div>
+                        <div class="row g-3 text-muted align-items-center">
+                            <div class="col-md-4 d-flex align-items-center">
+                                <i class="bi bi-telephone me-2 text-primary"></i>
+                                <div>
+                                    <div class="small fw-semibold text-primary">Phone</div>
+                                    <div class="small" id="pContactPhone">123-456-7890</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center">
+                                <i class="bi bi-envelope me-2 text-primary"></i>
+                                <div>
+                                    <div class="small fw-semibold text-primary">Mail</div>
+                                    <div class="small" id="pContactEmail">hello@reallygreatsite.com</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center">
+                                <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                <div>
+                                    <div class="small fw-semibold text-primary">Address</div>
+                                    <div class="small" id="pContactAddr">123 Anywhere St., Any City</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
